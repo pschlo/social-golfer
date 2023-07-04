@@ -1,2 +1,6 @@
 other/
 *.class
+.vscode
+/src/markdown
+/src/json
+__pycache__
