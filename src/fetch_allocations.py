@@ -52,7 +52,7 @@ class IDError(ValueError):
 # raises: IDError, HTTPError
 def get_allocation(id:int) -> Allocation[int]:
     url = f'https://breakoutroom.pythonanywhere.com/allocate/download/{id}'
-    response = requests.get(url, stream=True)
+    response = requests.get(url)
     response.raise_for_status()
     if response.content.decode("utf-8") == "Unknown matching ID.":
         raise IDError()
