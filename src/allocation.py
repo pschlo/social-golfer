@@ -34,7 +34,7 @@ class Group(Collection[T]):
     def __eq__(self, other: Group):
         if isinstance(other, Group):
             return self._people == other._people
-        return False
+        return NotImplemented
     
     def __hash__(self) -> int:
         return hash(self._people)
@@ -68,7 +68,7 @@ class Round(Collection[Group[T]]):
     def __eq__(self, other: Round):
         if isinstance(other, Round):
             return self._groups == other._groups
-        return False
+        return NotImplemented
     
     def __hash__(self) -> int:
         return hash(self._groups)
@@ -114,7 +114,7 @@ class Allocation(BaseAllocation[T]):
     def __eq__(self, other: Allocation):
         if isinstance(other, Allocation):
             return self._rounds == other._rounds
-        return False
+        return NotImplemented
     
     def _from_json(self, allocation: str):
         return self._from_collections(json.loads(allocation))

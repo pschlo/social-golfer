@@ -58,4 +58,4 @@ class CanonicalAllocation(BaseAllocation[int]):
             return other._rounds == self._rounds
         if isinstance(other, Allocation):
             return other == self._allocation
-        return False
+        return NotImplemented
