@@ -49,7 +49,7 @@ class IDError(ValueError):
     pass
 
 # raises: IDError, HTTPError
-def get_allocation(id:int) -> Allocation[int]:
+def get_allocation(id:int) -> Allocation:
     url = f'https://breakoutroom.pythonanywhere.com/allocate/download/{id}'
     response = requests.get(url)
     response.raise_for_status()

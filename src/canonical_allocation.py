@@ -13,13 +13,13 @@ T = TypeVar('T')
 Instances of this class have a specific order defined on their people, groups, group sizes and rounds.
 """
 class CanonicalAllocation(Generic[T], BaseAllocation[int]):
-    _allocation: Allocation[T]
+    _allocation: Allocation
     _rounds: tuple[tuple[tuple[int]]]
     people: tuple[int]
     num_groups: int
     group_sizes: tuple[tuple[int,int]]
 
-    def __init__(self, allocation: Allocation[T]) -> None:
+    def __init__(self, allocation: Allocation) -> None:
         self._allocation = allocation
 
         # try to sort people
