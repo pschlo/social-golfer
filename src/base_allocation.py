@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import Generic, TypeVar, Iterator
-from abc import ABC, abstractmethod
-from collections.abc import Collection, Sequence
+from typing import Generic, TypeVar
+from abc import ABC
+from collections.abc import Collection
 from tabulate import tabulate
 import json
 

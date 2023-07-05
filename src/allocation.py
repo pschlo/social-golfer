@@ -1,8 +1,7 @@
 from __future__ import annotations
 from collections.abc import Iterator
-from tabulate import tabulate
 from itertools import chain
-from typing import Any, TypeVar, Generic, overload, cast
+from typing import TypeVar, Generic, overload
 from collections.abc import Iterable, Collection
 from base_allocation import BaseAllocation
 from collections import Counter
