@@ -17,7 +17,7 @@ class AllocationError(ValueError):
 
 
 
-class Group(Generic[T], Collection[T]):
+class Group(Collection[T]):
     _people: frozenset[T]
 
     def __init__(self, people: Iterable[T]):
@@ -32,26 +32,22 @@ class Group(Generic[T], Collection[T]):
     def __contains__(self, obj):
         return obj in self._people
 
-    @property
-    def people(self):
-        return self._people
 
-
-class Round(Generic[T], Collection[Group[T]]):
+class Round(Collection[Group[T]]):
     _groups: frozenset[Group[T]]
-    _people: frozenset[T]
-    _group_sizes: frozenset[tuple[int,int]]
+    people: frozenset[T]
+    group_sizes: frozenset[tuple[int,int]]
 
     def __init__(self, groups: Iterable[Group[T]]):
         self._groups = frozenset(groups)
-        self._people = frozenset(chain(*self))
+        self.people = frozenset(chain(*self))
 
         # check that each person appears only once
-        if not len(self._people) == len(list(chain(*self))):
+        if not len(self.people) == len(list(chain(*self))):
             raise AllocationError("Invalid allocation")
 
         group_sizes = Counter(map(len, self)).items()
-        self._group_sizes = frozenset((num, size) for size, num in group_sizes)
+        self.group_sizes = frozenset((num, size) for size, num in group_sizes)
 
     def __iter__(self) -> Iterator[Group[T]]:
         yield from self._groups
@@ -61,24 +57,18 @@ class Round(Generic[T], Collection[Group[T]]):
     
     def __contains__(self, obj):
         return obj in self._groups
-    
-    @property
-    def groups(self):
-        return self._groups
-    @property
-    def people(self):
-        return self._people
-    @property
-    def group_sizes(self):
-        return self._group_sizes
 
 
 
-class Allocation(Generic[T], BaseAllocation[T]):
+"""
+Instances of this class are allocations with no specific order on their people, groups, group sizes or rounds.
+This provides a lot of flexibility and allows e.g. for fast comparison.
+"""
+class Allocation(BaseAllocation[T]):
     _rounds: frozenset[Round[T]]
-    _people: frozenset[T]
-    _num_groups: int
-    _group_sizes: frozenset[tuple[int,int]]
+    people: frozenset[T]
+    num_groups: int
+    group_sizes: frozenset[tuple[int,int]]
 
     @overload
     def __init__(self, allocation: str):
@@ -121,20 +111,24 @@ class Allocation(Generic[T], BaseAllocation[T]):
 
         # pick one round and copy attributes
         some_round = next(iter(self))
-        self._people = some_round.people
-        self._num_groups = len(some_round)
-        self._group_sizes = some_round.group_sizes
+        self.people = some_round.people
+        self.num_groups = len(some_round)
+        self.group_sizes = some_round.group_sizes
 
-        # check that rounds contain same people
-        if not all(round.people == self._people for round in self):
+        if not self.is_valid():
             raise AllocationError("Invalid allocation")
+
+    def is_valid(self) -> bool:
+        # check that rounds contain same people
+        if not all(round.people == self.people for round in self):
+            return False
 
         # check that rounds have the same group sizes
-        if not all(round.group_sizes == some_round.group_sizes for round in self):
-            raise AllocationError("Invalid allocation")
+        if not all(round.group_sizes == self.group_sizes for round in self):
+            return False
 
         # check if actual solution, i.e. that noone is in a group with another person more than once
-        seen: dict[T, set[T]] = {p: set() for p in self._people}
+        seen: dict[T, set[T]] = {p: set() for p in self.people}
         for round in self:
             for group in round:
                 group = set(group)
@@ -142,18 +136,7 @@ class Allocation(Generic[T], BaseAllocation[T]):
                     others = group - {person}
                     # check intersection
                     if seen[person] & others:
-                        raise AllocationError("Invalid allocation")
+                        return False
                     seen[person].update(others)
-    
-    def to_canonical(self) -> CanonicalAllocation:
-        return CanonicalAllocation(self)
 
-    @property
-    def people(self):
-        return self._people
-    @property
-    def num_groups(self):
-        return self._num_groups
-    @property
-    def group_sizes(self):
-        return self._group_sizes
+        return True

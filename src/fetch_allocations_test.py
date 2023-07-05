@@ -16,8 +16,8 @@ class Test(TestCase):
         a = Allocation(rounds)
         self.assertEqual(a.num_people, 11)
         self.assertEqual(a.num_rounds, 5)
-        self.assertEqual(a._num_groups, 5)
-        self.assertListEqual(a._group_sizes, [(1,3), (4,2)])
+        self.assertEqual(a.num_groups, 5)
+        self.assertListEqual(a.group_sizes, [(1,3), (4,2)])
     
     # a single person entry has been replaced with a nonexistent person
     def test_2(self):
