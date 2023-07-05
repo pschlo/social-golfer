@@ -1,15 +1,15 @@
 from __future__ import annotations
 from base_allocation import BaseAllocation
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Iterator, overload, Collection
 if TYPE_CHECKING:
     from allocation import Allocation
 
 
 class CanonicalAllocation(BaseAllocation[int]):
-    rounds: list[list[list[int]]]
-    people: list[int]
-    num_groups: int
-    group_sizes: list[tuple[int,int]]
+    _rounds: tuple[tuple[tuple[int]]]
+    _people: tuple[int]
+    _num_groups: int
+    _group_sizes: tuple[tuple[int,int]]
 
     def __init__(self, allocation: Allocation) -> None:
         # try to sort people
@@ -21,13 +21,12 @@ class CanonicalAllocation(BaseAllocation[int]):
 
         #convert people to ids, which start at 1
         person_to_id = {person: i+1 for i, person in enumerate(sorted_people)}
-        print(person_to_id)
 
-        self.people = sorted(person_to_id[p] for p in allocation.people)
-        self.num_groups = allocation.num_groups
-        self.group_sizes = sorted(allocation.group_sizes, key=lambda t: t[1], reverse=True)
+        self._people = tuple(sorted(person_to_id[p] for p in allocation.people))
+        self._num_groups = allocation.num_groups
+        self._group_sizes = tuple(sorted(allocation.group_sizes, key=lambda t: t[1], reverse=True))
 
-        self.rounds = []
+        new_alloc = []
         for round in allocation:
             new_round: list[list[int]] = []
             for group in round:
@@ -36,8 +35,25 @@ class CanonicalAllocation(BaseAllocation[int]):
             # sort groups
             new_round.sort()
             new_round.sort(key=len, reverse=True)
-            self.rounds.append(new_round)
-
+            new_alloc.append(new_round)
         # sort rounds
-        self.rounds.sort()
+        self._rounds = tuple(sorted(new_alloc))
+    
+    def __iter__(self) -> Iterator[Collection[Collection[int]]]:
+        yield from self._rounds
+    
+    def __len__(self) -> int:
+        return len(self._rounds)
+    
+    def __contains__(self, obj: object) -> bool:
+        return obj in self._rounds
 
+    @property
+    def people(self):
+        return self._people
+    @property
+    def num_groups(self):
+        return self._num_groups
+    @property
+    def group_sizes(self):
+        return self._group_sizes

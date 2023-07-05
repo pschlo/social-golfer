@@ -16,8 +16,8 @@ class Test(TestCase):
         a = Allocation(rounds)
         self.assertEqual(a.num_people, 11)
         self.assertEqual(a.num_rounds, 5)
-        self.assertEqual(a.num_groups, 5)
-        self.assertListEqual(a.group_sizes, [(1,3), (4,2)])
+        self.assertEqual(a._num_groups, 5)
+        self.assertListEqual(a._group_sizes, [(1,3), (4,2)])
     
     # a single person entry has been replaced with a nonexistent person
     def test_2(self):
@@ -49,8 +49,8 @@ class Test(TestCase):
         self.assertNotEqual(rounds_5, rounds_1)
         a5 = Allocation(rounds_5)
         a1 = Allocation(rounds_1)
-        self.assertEqual(a5.rounds, a1.rounds)
-        self.assertEqual(a5.rounds, rounds_1)
+        self.assertEqual(a5._rounds, a1._rounds)
+        self.assertEqual(a5._rounds, rounds_1)
 
     # the person order inside of three groups has been changed
     def test_6(self):
@@ -61,8 +61,8 @@ class Test(TestCase):
         self.assertNotEqual(rounds_6, rounds_1)
         a6 = Allocation(rounds_6)
         a1 = Allocation(rounds_1)
-        self.assertEqual(a6.rounds, a1.rounds)
-        self.assertEqual(a6.rounds, rounds_1)
+        self.assertEqual(a6._rounds, a1._rounds)
+        self.assertEqual(a6._rounds, rounds_1)
     
     # in one round, two people from different groups were swapped
     def test_7(self):
