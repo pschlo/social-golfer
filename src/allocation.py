@@ -5,7 +5,7 @@ from typing import TypeVar, Generic, overload
 from collections.abc import Iterable, Collection
 from base_allocation import BaseAllocation
 from collections import Counter
-from canonical_allocation import CanonicalAllocation
+from my_canonical_allocation import MyCanonicalAllocation
 import json
 
 
@@ -32,9 +32,15 @@ class Group(Generic[T], Collection[T]):
     def __contains__(self, obj):
         return obj in self._people
 
-    @property
-    def people(self):
-        return self._people
+    def __eq__(self, other: Iterable) -> bool:
+        if isinstance(other, Group):
+            return self._people == other._people
+        if isinstance(other, Iterable):
+            return self._people == set(other)
+        return False
+    
+    def to_set(self):
+        return 
 
 
 class Round(Generic[T], Collection[Group[T]]):
@@ -62,9 +68,13 @@ class Round(Generic[T], Collection[Group[T]]):
     def __contains__(self, obj):
         return obj in self._groups
     
-    @property
-    def groups(self):
-        return self._groups
+    def __eq__(self, other: Iterable) -> bool:
+        if isinstance(other, Round):
+            return self._groups == other._groups
+        if isinstance(other, Iterable):
+            return 
+        return False
+
     @property
     def people(self):
         return self._people
@@ -73,12 +83,16 @@ class Round(Generic[T], Collection[Group[T]]):
         return self._group_sizes
 
 
-
+"""
+Instances of this class are allocations with no predefined order defined for its people, groups, rounds or group sizes.
+This allows for faster lookup and more flexibility.
+"""
 class Allocation(Generic[T], BaseAllocation[T]):
     _rounds: frozenset[Round[T]]
     _people: frozenset[T]
     _num_groups: int
     _group_sizes: frozenset[tuple[int,int]]
+    _canonical: CanonicalAllocation
 
     @overload
     def __init__(self, allocation: str):
@@ -98,13 +112,20 @@ class Allocation(Generic[T], BaseAllocation[T]):
             return self._from_collections(allocation)
 
     def __iter__(self) -> Iterator[Round[T]]:
-        yield from self._rounds
+        yield from self._canonical
     
     def __len__(self) -> int:
         return len(self._rounds)
 
     def __contains__(self, obj: object) -> bool:
         return obj in self._rounds
+
+    def __eq__(self, other: BaseAllocation) -> bool:
+        if isinstance(other, Allocation):
+            return self._rounds == other._rounds
+        elif isinstance(other, BaseAllocation):
+            return set(self._rounds) == set(other)
+        return False
     
     def _from_json(self, allocation: str):
         return self._from_collections(json.loads(allocation))
@@ -124,6 +145,13 @@ class Allocation(Generic[T], BaseAllocation[T]):
         self._people = some_round.people
         self._num_groups = len(some_round)
         self._group_sizes = some_round.group_sizes
+        
+        # set canonical representation
+        self._canonical = MyCanonicalAllocation(self)
+
+
+    def is_valid(self):
+        some_round = next(iter(self))
 
         # check that rounds contain same people
         if not all(round.people == self._people for round in self):
@@ -144,16 +172,13 @@ class Allocation(Generic[T], BaseAllocation[T]):
                     if seen[person] & others:
                         raise AllocationError("Invalid allocation")
                     seen[person].update(others)
-    
-    def to_canonical(self) -> CanonicalAllocation:
-        return CanonicalAllocation(self)
 
     @property
     def people(self):
-        return self._people
+        return self._canonical.people
     @property
     def num_groups(self):
-        return self._num_groups
+        return self._canonical.num_groups
     @property
     def group_sizes(self):
-        return self._group_sizes
+        return self._canonical.group_sizes
