@@ -5,7 +5,6 @@ from typing import TypeVar, Generic, overload
 from collections.abc import Iterable, Collection
 from base_allocation import BaseAllocation
 from collections import Counter
-from canonical_allocation import CanonicalAllocation
 import json
 
 
@@ -31,6 +30,14 @@ class Group(Collection[T]):
     
     def __contains__(self, obj):
         return obj in self._people
+    
+    def __eq__(self, other: Group):
+        if isinstance(other, Group):
+            return self._people == other._people
+        return False
+    
+    def __hash__(self) -> int:
+        return hash(self._people)
 
 
 class Round(Collection[Group[T]]):
@@ -57,6 +64,14 @@ class Round(Collection[Group[T]]):
     
     def __contains__(self, obj):
         return obj in self._groups
+    
+    def __eq__(self, other: Round):
+        if isinstance(other, Round):
+            return self._groups == other._groups
+        return False
+    
+    def __hash__(self) -> int:
+        return hash(self._groups)
 
 
 
@@ -95,6 +110,11 @@ class Allocation(BaseAllocation[T]):
 
     def __contains__(self, obj: object) -> bool:
         return obj in self._rounds
+    
+    def __eq__(self, other: Allocation):
+        if isinstance(other, Allocation):
+            return self._rounds == other._rounds
+        return False
     
     def _from_json(self, allocation: str):
         return self._from_collections(json.loads(allocation))
@@ -140,3 +160,6 @@ class Allocation(BaseAllocation[T]):
                     seen[person].update(others)
 
         return True
+    
+    def __hash__(self) -> int:
+        return hash(self._rounds)

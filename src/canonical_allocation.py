@@ -1,20 +1,22 @@
 from __future__ import annotations
 from base_allocation import BaseAllocation
 from typing import TYPE_CHECKING, Iterator, Collection
-if TYPE_CHECKING:
-    from allocation import Allocation
+from allocation import Allocation
 
 
 """
 Instances of this class have a specific order defined on their people, groups, group sizes and rounds.
 """
 class CanonicalAllocation(BaseAllocation[int]):
-    rounds: tuple[tuple[tuple[int]]]
+    _allocation: Allocation
+    _rounds: tuple[tuple[tuple[int]]]
     people: tuple[int]
     num_groups: int
     group_sizes: tuple[tuple[int,int]]
 
     def __init__(self, allocation: Allocation) -> None:
+        self._allocation = allocation
+
         # try to sort people
         sorted_people: list
         try:
@@ -40,13 +42,20 @@ class CanonicalAllocation(BaseAllocation[int]):
             new_round.sort(key=len, reverse=True)
             new_alloc.append(new_round)
         # sort rounds
-        self.rounds = tuple(sorted(new_alloc))
+        self._rounds = tuple(sorted(new_alloc))
     
     def __iter__(self) -> Iterator[Collection[Collection[int]]]:
-        yield from self.rounds
+        yield from self._rounds
     
     def __len__(self) -> int:
-        return len(self.rounds)
+        return len(self._rounds)
     
     def __contains__(self, obj: object) -> bool:
-        return obj in self.rounds
+        return obj in self._rounds
+    
+    def __eq__(self, other: CanonicalAllocation | Allocation) -> bool:
+        if isinstance(other, CanonicalAllocation):
+            return other._rounds == self._rounds
+        if isinstance(other, Allocation):
+            return other == self._allocation
+        return False
