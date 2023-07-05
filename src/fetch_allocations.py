@@ -58,8 +58,7 @@ def get_allocation(id:int) -> Allocation[int]:
         raise IDError()
     else:
         allocation_str = response.content.decode("utf-8")
-        allocation: list[list[list[int]]] = json.loads(allocation_str)
-        return Allocation.from_lists(allocation)
+        return Allocation(allocation_str)
         
 
 

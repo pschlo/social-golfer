@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Generic, TypeVar
 from abc import ABC, abstractmethod
 from collections.abc import Collection
@@ -35,5 +36,3 @@ class BaseAllocation(Generic[T], ABC):
 
     def to_json(self) -> str:
         return json.dumps(self.rounds)
-    
-

@@ -1,5 +1,8 @@
+from __future__ import annotations
 from base_allocation import BaseAllocation
-from allocation import Allocation
+from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+    from allocation import Allocation
 
 
 class CanonicalAllocation(BaseAllocation[int]):
@@ -9,8 +12,16 @@ class CanonicalAllocation(BaseAllocation[int]):
     group_sizes: list[tuple[int,int]]
 
     def __init__(self, allocation: Allocation) -> None:
+        # try to sort people
+        sorted_people: list
+        try:
+            sorted_people = sorted(allocation.people)
+        except ValueError:
+            sorted_people = list(allocation.people)
+
         #convert people to ids, which start at 1
-        person_to_id = {person: i+1 for i, person in enumerate(allocation.people)}
+        person_to_id = {person: i+1 for i, person in enumerate(sorted_people)}
+        print(person_to_id)
 
         self.people = sorted(person_to_id[p] for p in allocation.people)
         self.num_groups = allocation.num_groups
