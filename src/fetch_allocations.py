@@ -1,6 +1,5 @@
 from __future__ import annotations
 import requests
-import json
 import time
 from pathlib import Path
 from allocation import Allocation
