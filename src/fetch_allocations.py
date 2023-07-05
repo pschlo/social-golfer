@@ -23,11 +23,11 @@ def download_allocations(ids: Iterable[int] = range(1,1000), outdir: Path = Path
     markdown_dir.mkdir(exist_ok=True)
     json_dir.mkdir(exist_ok=True)
 
-    alloc: CanonicalAllocation
     for id in ids:
         print(f'ID {id}: processing allocation')
         try:
             alloc = CanonicalAllocation(get_allocation(id))
+            # print(alloc._allocation.people_to_groups([f'Gruppe {a}' for a in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']))
         except IDError:
             print(f'ID {id}: Failed, stopping')
             break

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from collections.abc import Iterator
 from itertools import chain
-from typing import TypeVar, Generic, overload
+from typing import TypeVar, Generic, overload, Any
 from collections.abc import Iterable, Collection
 from base_allocation import BaseAllocation
 from collections import Counter
@@ -160,6 +160,28 @@ class Allocation(BaseAllocation[T]):
                     seen[person].update(others)
 
         return True
+
+    # map people to list of groups, where each position stands for a round
+    @overload
+    def people_to_groups(self) -> dict[T, list[int]]:
+        ...
+    @overload
+    def people_to_groups(self, group_labels: list[str]) -> dict[T, list[str]]:
+        ...
+    def people_to_groups(self, group_labels: list[str]|None=None):
+        people_to_groups: dict[T, list[Any]] = {p: [] for p in self.people}
+        for round in self:
+            for i, group in enumerate(round):
+                for person in group:
+                    label = group_labels[i] if group_labels else i
+                    people_to_groups[person].append(label)
+        # because each person appears exactly once per round, each person now has num_groups many group ids
+        return people_to_groups
+
+
+
+
+
     
     def __hash__(self) -> int:
         return hash(self._rounds)

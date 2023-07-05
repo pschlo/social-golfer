@@ -1,26 +1,32 @@
 from __future__ import annotations
 from base_allocation import BaseAllocation
-from typing import TYPE_CHECKING, Iterator, Collection
+from typing import TYPE_CHECKING, Iterator, Collection, TypeVar, Any, Generic
 from allocation import Allocation
+
+
+
+T = TypeVar('T')
+
 
 
 """
 Instances of this class have a specific order defined on their people, groups, group sizes and rounds.
 """
-class CanonicalAllocation(BaseAllocation[int]):
-    _allocation: Allocation
+class CanonicalAllocation(Generic[T], BaseAllocation[int]):
+    _allocation: Allocation[T]
     _rounds: tuple[tuple[tuple[int]]]
     people: tuple[int]
     num_groups: int
     group_sizes: tuple[tuple[int,int]]
 
-    def __init__(self, allocation: Allocation) -> None:
+    def __init__(self, allocation: Allocation[T]) -> None:
         self._allocation = allocation
 
         # try to sort people
         sorted_people: list
         try:
-            sorted_people = sorted(allocation.people)
+            p: Any = allocation.people
+            sorted_people = sorted(p)
         except ValueError:
             sorted_people = list(allocation.people)
 
