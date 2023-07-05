@@ -15,18 +15,18 @@ They are allocations of people to groups and rounds that also fulfill the soluti
 Instances are immutable. It should not be possible to create invalid solutions.
 """
 class BaseAllocation(Generic[T], ABC, Collection[Collection[Collection[T]]]):
-    people: Collection[T]
+    num_people: int
     num_groups: int
     group_sizes: Collection[tuple[int,int]]
 
     @property
     def long_title(self) -> str:
         groups_str = ', '.join(f"{num} groups of {size}" for num, size in self.group_sizes)
-        return f'{len(self.people)} people over {len(self)} rounds ({groups_str})'
+        return f'{self.num_people} people over {len(self)} rounds ({groups_str})'
     
     @property
     def short_title(self) -> str:
-        title = f'{len(self.people)}@{len(self)}_'
+        title = f'{self.num_people}@{len(self)}_'
         title += '_'.join(f"{num}x{size}" for num, size in self.group_sizes)
         return title
 
@@ -38,7 +38,6 @@ class BaseAllocation(Generic[T], ABC, Collection[Collection[Collection[T]]]):
             row += [', '.join(map(str,group)) for group in round]
             data.append(row)
         return tabulate(data, headers, tablefmt="pipe")
-    
     
     def to_lists(self) -> list[list[list[T]]]:
         return [[list(group) for group in round] for round in self]
