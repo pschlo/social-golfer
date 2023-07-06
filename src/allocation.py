@@ -49,8 +49,9 @@ class Round:
 Instances of this class are allocations with no specific order on their people, groups, group sizes or rounds.
 This provides a lot of flexibility and allows e.g. for fast comparison.
 """
-class Allocation(BaseAllocation[int]):
+class Allocation(BaseAllocation[int, int]):
     _rounds: frozenset[frozenset[frozenset[int]]]
+    
     num_people: int
     num_groups: int
     group_sizes: frozenset[tuple[int,int]]

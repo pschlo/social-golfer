@@ -31,8 +31,8 @@ def download_allocations(ids: Iterable[int] = range(1,1000), outdir: Path = Path
         print(f'ID {id}: processing allocation')
         try:
             alloc = get_allocation(id)
-            alloc = IntAllocationView(alloc)
-            print(alloc.people_to_groups(PEOPLE))
+            alloc = IntAllocationView(alloc).with_people(PEOPLE)
+            print(alloc.people_to_groups())
             # print(alloc._allocation.people_to_groups([f'Gruppe {a}' for a in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']))
         except IDError:
             print(f'ID {id}: Failed, stopping')
