@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from allocation import Allocation
 from collections.abc import Iterable
-from allocation_view import AllocationView
+from allocation_view import AllocationView, IntAllocationView
 from string import ascii_uppercase
 
 
@@ -31,7 +31,8 @@ def download_allocations(ids: Iterable[int] = range(1,1000), outdir: Path = Path
         print(f'ID {id}: processing allocation')
         try:
             alloc = get_allocation(id)
-            alloc = AllocationView(alloc, people=range(1,alloc.num_people+1))
+            alloc = IntAllocationView(alloc)
+            print(alloc.people_to_groups(PEOPLE))
             # print(alloc._allocation.people_to_groups([f'Gruppe {a}' for a in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']))
         except IDError:
             print(f'ID {id}: Failed, stopping')

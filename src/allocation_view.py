@@ -1,3 +1,4 @@
+from __future__ import annotations
 from allocation import Allocation
 from typing import Generic, TypeVar, Iterator, overload
 from collections.abc import Sequence
@@ -8,6 +9,7 @@ T = TypeVar('T')
 
 
 class AllocationView(BaseAllocation[T]):
+    _allocation: Allocation
     _rounds: tuple[tuple[tuple[T]]]
     people: tuple[T]
     num_people: int
@@ -47,3 +49,15 @@ class AllocationView(BaseAllocation[T]):
     
     def __hash__(self) -> int:
         return hash(self._rounds)
+
+    def __eq__(self, other: AllocationView | Allocation) -> bool:
+        if isinstance(other, AllocationView):
+            return other._rounds == self._rounds
+        if isinstance(other, Allocation):
+            return other == self._allocation
+        return NotImplemented
+    
+
+class IntAllocationView(AllocationView[int]):
+    def __init__(self, allocation: Allocation) -> None:
+        super().__init__(allocation, range(1, allocation.num_people+1))

@@ -131,20 +131,4 @@ class Allocation(BaseAllocation[int]):
                     seen[person].update(others)
         return True
 
-    # map people to list of groups, where each position stands for a round
-    # @overload
-    # def people_to_groups(self) -> dict[int, list[int]]:
-    #     ...
-    # @overload
-    # def people_to_groups(self, group_labels: list[str]) -> dict[int, list[str]]:
-    #     ...
-    # def people_to_groups(self, group_labels: list[str]|None=None):
-    #     people_to_groups: dict[int, list[Any]] = {p: [] for p in self.people}
-    #     for round in self:
-    #         for i, group in enumerate(round):
-    #             for person in group:
-    #                 label = group_labels[i] if group_labels else i
-    #                 people_to_groups[person].append(label)
-    #     # because each person appears exactly once per round, each person now has num_groups many group ids
-    #     return people_to_groups
 
