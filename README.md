@@ -1,4 +1,7 @@
-# Social Golfer
+
+# <div align="center"><img width="200" src="https://github.com/user-attachments/assets/55943f50-48ab-4295-a0e1-058541ced526" /> </br>Social Golfer</div>
+
+
 
 A small java program that finds solutions to the [Social Golfer Problem](https://en.wikipedia.org/wiki/Social_golfer_problem) by brute force.
 
