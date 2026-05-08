@@ -1,5 +1,6 @@
 
-# <div align="center"><img width="200" src="https://github.com/user-attachments/assets/d9a37462-ac8e-47b5-93ae-c614987f57d3" /> </br>Social Golfer</div>
+# <div align="center"><img width="200" src="https://github.com/user-attachments/assets/4b77d063-5718-4c14-b62e-d8dc279c89ca" /> </br>Social Golfer</div>
+
 
 A small java program that finds solutions to the [Social Golfer Problem](https://en.wikipedia.org/wiki/Social_golfer_problem) by brute force.
 
